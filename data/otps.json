@@ -1,0 +1,12 @@
+[
+  {
+    "id": "otp_mf8t5p1wtmef3f4inkj",
+    "phone": "09102413207",
+    "purpose": "signup",
+    "codeHash": "707db3488cacb650502b22811f9f25ebc1d526c59ef641955860e4b70ed3f0ee",
+    "salt": "ab70695c03839dff",
+    "createdAt": "2025-09-06T22:00:49.171Z",
+    "expiresAt": "2025-09-06T22:05:49.171Z",
+    "attempts": 0
+  }
+]
