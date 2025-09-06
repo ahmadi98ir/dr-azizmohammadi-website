@@ -1,0 +1,11 @@
+[
+  {
+    "id": "u_mf8ouf7f90tte4kv70h",
+    "name": "مدیر سیستم",
+    "email": "admin@clinic.local",
+    "role": "admin",
+    "passwordSalt": "a308331c4e8cc22538aa22242d5cfbe0",
+    "passwordHash": "c5a4768dd059d075cd8121aca4974ded664e8a255f9dd2a07d8a1bcabb0274d0a2f1f2d8cf48abda308762243021d7d4c3ffb5711e765b7779908eaf0375391e",
+    "createdAt": "2025-09-06T20:00:04.731Z"
+  }
+]
