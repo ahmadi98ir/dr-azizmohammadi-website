@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createOtp, isValidIranPhone } from '@/lib/otp';
-import { sendSMS } from '@/lib/notify';
+import { sendOtp } from '@/lib/notify';
 import { getUsers } from '@/lib/db';
 
 export async function POST(req: Request) {
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   }
   const { code } = await createOtp(phone, 'signup');
   try {
-    await sendSMS(phone, `کد تایید شما: ${code}\nاین کد تا ۵ دقیقه معتبر است.`);
+    await sendOtp(phone, code, 5);
   } catch {}
   return NextResponse.json({ ok: true });
 }

@@ -7,5 +7,14 @@
     "body": "کد تایید شما: 912739\nاین کد تا ۵ دقیقه معتبر است.",
     "status": "failed",
     "createdAt": "2025-09-06T22:00:49.227Z"
+  },
+  {
+    "id": "n_mf9hhxglnpxohxzleud",
+    "type": "sms",
+    "to": "09102413207",
+    "subject": "OTP",
+    "body": "OTP 794818 TTL 5m",
+    "status": "sent",
+    "createdAt": "2025-09-07T09:22:10.725Z"
   }
 ]

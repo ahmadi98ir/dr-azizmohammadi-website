@@ -1,12 +1,12 @@
 [
   {
-    "id": "otp_mf8t5p1wtmef3f4inkj",
+    "id": "otp_mf9hhxgg2466u44qpo6",
     "phone": "09102413207",
     "purpose": "signup",
-    "codeHash": "707db3488cacb650502b22811f9f25ebc1d526c59ef641955860e4b70ed3f0ee",
-    "salt": "ab70695c03839dff",
-    "createdAt": "2025-09-06T22:00:49.171Z",
-    "expiresAt": "2025-09-06T22:05:49.171Z",
+    "codeHash": "da0d3f2cc78d708b6a6a8d9911a8ce9464a7ca90489209b8758ebe18a40a84b1",
+    "salt": "eb29492218bea03d",
+    "createdAt": "2025-09-07T09:22:10.720Z",
+    "expiresAt": "2025-09-07T09:27:10.720Z",
     "attempts": 0
   }
 ]

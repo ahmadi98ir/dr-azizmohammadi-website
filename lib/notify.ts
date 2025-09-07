@@ -2,7 +2,7 @@ import { NotificationRecord } from './types';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { toISO, uid } from './utils';
-import { sendSMSViaProvider } from './sms';
+import { sendSMSViaProvider, sendOtpViaProvider } from './sms';
 
 const dataDir = path.join(process.cwd(), 'data');
 const file = path.join(dataDir, 'notifications.json');
@@ -71,4 +71,29 @@ export async function sendSMS(to: string, body: string) {
 
 export async function listNotifications() {
   return await readAll();
+}
+
+export async function sendOtp(to: string, code: string, ttlMinutes: number) {
+  const items = await readAll();
+  const rec: NotificationRecord = {
+    id: uid('n_'),
+    type: 'sms',
+    to,
+    subject: 'OTP',
+    body: `OTP ${code} TTL ${ttlMinutes}m`,
+    status: 'queued',
+    createdAt: toISO(Date.now()),
+  };
+  items.push(rec);
+  await saveAll(items);
+  try {
+    const result = await sendOtpViaProvider(to, code, ttlMinutes);
+    rec.status = result.ok ? 'sent' : 'failed';
+    await saveAll(items);
+    return rec.id;
+  } catch {
+    rec.status = 'failed';
+    await saveAll(items);
+    return rec.id;
+  }
 }

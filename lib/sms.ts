@@ -10,6 +10,17 @@ export async function sendSMSViaProvider(to: string, message: string): Promise<S
   return { ok: true, providerId: 'mock' };
 }
 
+// Specialized helper for OTP via template-based providers
+export async function sendOtpViaProvider(to: string, code: string, ttlMinutes: number): Promise<SendResult> {
+  const provider = process.env.SMS_PROVIDER || 'mock';
+  if (provider === 'smsir_ultrafast') {
+    return await sendViaSmsIrUltraFast(to, code, ttlMinutes);
+  }
+  // Fallback: plain text send
+  const message = `کد تأیید شما: ${code} (اعتبار: ${ttlMinutes} دقیقه) — drazizmohammadi.ir`;
+  return await sendSMSViaProvider(to, message);
+}
+
 async function sendViaSmsIr(to: string, message: string): Promise<SendResult> {
   // NOTE: Please set these in your .env.local according to sms.ir docs
   // Example vars:
@@ -46,6 +57,50 @@ async function sendViaSmsIr(to: string, message: string): Promise<SendResult> {
     return { ok: true, providerId };
   } catch (e: any) {
     return { ok: false, error: e?.message || 'smsir_request_failed' };
+  }
+}
+
+async function sendViaSmsIrUltraFast(to: string, code: string, ttlMinutes: number): Promise<SendResult> {
+  // Ultra Fast Verify API (template-based). Defaults to SMS.ir v1 verify endpoint.
+  // Required envs:
+  //   SMSIR_API_KEY
+  //   SMSIR_TEMPLATE_ID (numeric)
+  // Optional override:
+  //   SMSIR_VERIFY_URL (default: https://api.sms.ir/v1/send/verify)
+  const url = process.env.SMSIR_VERIFY_URL || 'https://api.sms.ir/v1/send/verify';
+  const apiKey = process.env.SMSIR_API_KEY;
+  const templateIdStr = process.env.SMSIR_TEMPLATE_ID;
+  const templateId = templateIdStr ? Number(templateIdStr) : NaN;
+  if (!apiKey || !templateIdStr || Number.isNaN(templateId)) {
+    return { ok: false, error: 'smsir_ultrafast_env_missing' };
+  }
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+      },
+      body: JSON.stringify({
+        mobile: to,
+        templateId,
+        parameters: [
+          { name: 'CODE', value: String(code) },
+          { name: 'TTL', value: String(ttlMinutes) },
+        ],
+      }),
+    } as RequestInit);
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      return { ok: false, error: `smsir_verify_http_${res.status}:${text}` };
+    }
+    const data = await res.json().catch(() => ({}));
+    const providerId = (data?.messageId || data?.id || data?.data?.messageId || '').toString() || undefined;
+    return { ok: true, providerId };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || 'smsir_verify_request_failed' };
   }
 }
 
