@@ -42,6 +42,16 @@ export default function ConsultChatPage() {
     listRef.current?.scrollTo({ top: 1e9, behavior: 'smooth' });
   }, [messages.length]);
 
+  const load = async () => {
+    try {
+      const res = await fetch(`/api/messages/${apptId}`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data.items || []);
+      }
+    } catch {}
+  };
+
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
