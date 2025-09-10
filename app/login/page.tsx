@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [cooldown, setCooldown] = useState(0);
   const router = useRouter();
   // cooldown ticker
-  React.useEffect(() => {
+  useEffect(() => {
     if (cooldown <= 0) return;
     const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
     return () => clearInterval(t);
