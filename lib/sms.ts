@@ -43,16 +43,20 @@ async function sendViaSmsIr(to: string, message: string): Promise<SendResult> {
     // The exact body/headers depend on sms.ir API method (ultra-fast, bulk, etc.)
     // Adjust keys to match your account’s endpoint.
     const useBearer = process.env.SMSIR_AUTH_BEARER === '1';
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (useBearer) headers['Authorization'] = `Bearer ${apiKey}`; else headers['x-api-key'] = apiKey;
+    const headerName = process.env.SMSIR_HEADER_NAME || 'x-api-key';
+    const headers: Record<string, string> = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    if (useBearer) headers['Authorization'] = `Bearer ${apiKey}`; else headers[headerName] = apiKey as string;
+
+    const payload: any = {
+      mobileNumbers: [to],
+      messageText: message,
+    };
+    if (lineNumber) payload.lineNumber = lineNumber;
+
     const res = await fetch(url, {
       method: 'POST',
       headers,
-      body: JSON.stringify({
-        lineNumber,
-        mobileNumbers: [to],
-        messageText: message,
-      }),
+      body: JSON.stringify(payload),
     } as RequestInit);
 
     if (!res.ok) {
@@ -87,8 +91,9 @@ async function sendViaSmsIrUltraFast(to: string, code: string, ttlMinutes: numbe
     const ttlParam = process.env.SMSIR_PARAM_TTL_NAME || 'TTL';
     const includeTtl = process.env.SMSIR_INCLUDE_TTL !== '0';
     const useBearer = process.env.SMSIR_AUTH_BEARER === '1';
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (useBearer) headers['Authorization'] = `Bearer ${apiKey}`; else headers['x-api-key'] = apiKey;
+    const headerName = process.env.SMSIR_HEADER_NAME || 'x-api-key';
+    const headers: Record<string, string> = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    if (useBearer) headers['Authorization'] = `Bearer ${apiKey}`; else headers[headerName] = apiKey as string;
     const parameters: Array<{ name: string; value: string }> = [
       { name: codeParam, value: String(code) },
     ];
