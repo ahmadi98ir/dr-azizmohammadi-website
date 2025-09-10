@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { requireUser } from '@/lib/session';
 
 export async function POST(req: Request) {
+  if (process.env.ENABLE_ADMIN_TEST_ROUTES === '0') {
+    return NextResponse.json({ error: 'disabled' }, { status: 404 });
+  }
   const admin = await requireUser('admin');
   if (!admin) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const body = await req.json().catch(() => ({}));
@@ -28,6 +31,9 @@ export async function POST(req: Request) {
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  if (process.env.ENABLE_ADMIN_TEST_ROUTES === '0') {
+    return NextResponse.json({ error: 'disabled' }, { status: 404 });
+  }
   const admin = await requireUser('admin');
   if (!admin) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const provider = process.env.SMS_PROVIDER || 'mock';

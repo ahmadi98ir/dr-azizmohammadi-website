@@ -16,5 +16,14 @@
     "body": "OTP 794818 TTL 5m",
     "status": "sent",
     "createdAt": "2025-09-07T09:22:10.725Z"
+  },
+  {
+    "id": "n_mfdne8dv6pxmibukpp7",
+    "type": "sms",
+    "to": "09102413207",
+    "subject": "OTP",
+    "body": "OTP 537091 TTL 5m",
+    "status": "sent",
+    "createdAt": "2025-09-10T07:18:20.659Z"
   }
 ]

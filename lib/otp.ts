@@ -76,6 +76,11 @@ export async function verifyOtp(phone: string, code: string, purpose: 'signup' =
   if (!rec) return { ok: false, error: 'not_found' } as const;
   const now = Date.now();
   if (new Date(rec.expiresAt).getTime() < now) return { ok: false, error: 'expired' } as const;
+  // Too many attempts
+  const MAX_ATTEMPTS = Number(process.env.OTP_MAX_ATTEMPTS || 5);
+  if (rec.attempts >= MAX_ATTEMPTS) {
+    return { ok: false, error: 'too_many_attempts' } as const;
+  }
   const correct = hashCode(code, rec.salt) === rec.codeHash;
   if (!correct) {
     rec.attempts += 1;
@@ -107,4 +112,3 @@ export async function consumeTicket(ticketStr: string, purpose: 'signup' = 'sign
   await writeJson(ticketsFile, tickets);
   return { ok: true as const, phone: t.phone };
 }
-
