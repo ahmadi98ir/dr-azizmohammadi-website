@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { getSessionUser } from '@/lib/session';
 
 export const metadata = {
+  // Ensure absolute URLs (OpenGraph, canonical) use production domain
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: 'کلینیک ترک اعتیاد و مشاوره خانواده | دکتر سید مجید عزیزمحمدی',
   description:
     'ویزیت آنلاین، مشاوره روانشناسی، برنامه درمانی ترک اعتیاد، و پیگیری بیماران به صورت آنلاین.',

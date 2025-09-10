@@ -4,6 +4,23 @@ const PROTECTED_PREFIXES = ['/dashboard', '/admin'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  // Canonical host/https redirect (if configured)
+  const canonicalHost = process.env.CANONICAL_HOST || '';
+  if (canonicalHost) {
+    const reqHost = req.headers.get('host') || req.nextUrl.host;
+    if (reqHost !== canonicalHost) {
+      const url = req.nextUrl.clone();
+      url.host = canonicalHost;
+      url.protocol = 'https:';
+      return NextResponse.redirect(url);
+    }
+    const xfproto = req.headers.get('x-forwarded-proto') || '';
+    if (xfproto && xfproto !== 'https') {
+      const url = req.nextUrl.clone();
+      url.protocol = 'https:';
+      return NextResponse.redirect(url);
+    }
+  }
   const needsAuth = PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'));
   if (!needsAuth) return NextResponse.next();
   const token = req.cookies.get('session_token')?.value;
@@ -19,4 +36,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/dashboard/:path*', '/admin/:path*'],
 };
-
