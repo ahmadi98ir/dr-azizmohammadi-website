@@ -12,7 +12,14 @@ export default function RegisterPage() {
   const [ticket, setTicket] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
   const router = useRouter();
+  // cooldown ticker
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,13 +27,21 @@ export default function RegisterPage() {
     setError(null);
     try {
       if (step === 1) {
+        if (cooldown > 0) return; // prevent spamming
         const res = await fetch('/api/auth/otp/request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data?.error || 'خطا در ارسال کد');
+        if (!res.ok) {
+          if (res.status === 429 && typeof data?.retryAfterSec === 'number') {
+            setCooldown(data.retryAfterSec);
+          }
+          throw new Error(data?.error || 'خطا در ارسال کد');
+        }
+        // start standard cooldown (e.g., 60s) if server didn't set
+        setCooldown((prev) => (prev > 0 ? prev : 60));
         setStep(2);
       } else if (step === 2) {
         const res = await fetch('/api/auth/otp/verify', {
@@ -35,7 +50,18 @@ export default function RegisterPage() {
           body: JSON.stringify({ phone, code: otp }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data?.error || 'کد نامعتبر است');
+        if (!res.ok) {
+          const err = String(data?.error || 'کد نامعتبر است');
+          if (err === 'too_many_attempts') {
+            setError('تعداد تلاش‌ها زیاد است. کمی بعد دوباره امتحان کنید.');
+            return;
+          }
+          if (err === 'invalid_code') {
+            setError('کد وارد‌شده نادرست است.');
+            return;
+          }
+          throw new Error(err);
+        }
         setTicket(data.ticket);
         setStep(3);
       } else if (step === 3) {
@@ -65,8 +91,8 @@ export default function RegisterPage() {
             <label className="text-sm">شماره موبایل</label>
             <input className="border rounded-lg px-3 py-2" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="09xxxxxxxxx" />
             {error && <p className="text-sm text-red-600">{error}</p>}
-            <button disabled={loading} className="btn btn-primary" type="submit">
-              {loading ? 'در حال ارسال کد...' : 'ارسال کد تایید'}
+            <button disabled={loading || cooldown > 0} className="btn btn-primary" type="submit">
+              {loading ? 'در حال ارسال کد...' : cooldown > 0 ? `ارسال مجدد در ${cooldown}s` : 'ارسال کد تایید'}
             </button>
           </>
         )}

@@ -5,6 +5,9 @@ import { sendOtp } from '@/lib/notify';
 import { getUsers } from '@/lib/db';
 
 export async function POST(req: Request) {
+  // Optional same-origin enforcement
+  const { sameOriginOk } = await import('@/lib/security');
+  if (!sameOriginOk(req)) return NextResponse.json({ error: 'forbidden_origin' }, { status: 403 });
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: 'invalid_body' }, { status: 400 });
   const { phone } = body as { phone?: string };

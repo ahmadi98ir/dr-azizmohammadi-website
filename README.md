@@ -98,6 +98,14 @@ DATABASE_URL="file:./prisma/dev.db"
 - `SMSIR_SEND_URL` آدرس endpoint ارسال پیامک در پنل sms.ir (طبق مستندات سرویس شما)
 - `SMSIR_API_KEY` کلید API برای هدر (مانند `x-api-key`) یا Authorization بر حسب پنل
 - `SMSIR_LINE_NUMBER` شماره خط ارسال (در صورت نیاز)
+- `SMSIR_AUTH_BEARER` اگر مقدار `1` باشد، کلید به صورت `Authorization: Bearer <key>` ارسال می‌شود
+- `SMSIR_HEADER_NAME` در صورت نیاز به هدر سفارشی (پیش‌فرض: `x-api-key`)
+- `SMSIR_PARAM_CODE_NAME` نام پارامتر کد در قالب (ultra-fast)
+- `SMSIR_INCLUDE_TTL` اگر `0` باشد، پارامتر TTL به قالب اضافه نمی‌شود
+- `REQUIRE_SAME_ORIGIN=1` الزام ارسال درخواست‌ها از یک Origin برابر با `NEXT_PUBLIC_BASE_URL` برای امنیت بیشتر
+- `LOGIN_MAX_ATTEMPTS` حداکثر تلاش ورود در ۱۰ دقیقه (پیش‌فرض ۲۰)
+- `OTP_MAX_ATTEMPTS` حداکثر تلاش وارد کردن کد (پیش‌فرض ۵)
+- `ENABLE_ADMIN_TEST_ROUTES=0` غیرفعال کردن مسیرهای تست ادمین در تولید
 
 توجه: ساختار دقیق payload و هدرها باید مطابق مستندات sms.ir شما تنظیم شود. در فایل `lib/sms.ts` می‌توانید در صورت لزوم کلیدها را تغییر دهید (ultra-fast/verify/bulk).
 

@@ -7,7 +7,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
   const router = useRouter();
+  // cooldown ticker
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +27,13 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'خطا در ورود');
+      if (!res.ok) {
+        if (res.status === 429 && typeof data?.retryAfterSec === 'number') {
+          setCooldown(data.retryAfterSec);
+          throw new Error('تلاش‌های ورود زیاد است. کمی بعد دوباره امتحان کنید.');
+        }
+        throw new Error(data?.error || 'خطا در ورود');
+      }
       router.push('/dashboard');
       router.refresh();
     } catch (err: any) {
@@ -44,11 +57,10 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
-        <button disabled={loading} className="btn btn-primary" type="submit">
-          {loading ? 'در حال ورود...' : 'ورود'}
+        <button disabled={loading || cooldown > 0} className="btn btn-primary" type="submit">
+          {loading ? 'در حال ورود...' : cooldown > 0 ? `تلاش مجدد در ${cooldown}s` : 'ورود'}
         </button>
       </form>
     </div>
   );
 }
-
