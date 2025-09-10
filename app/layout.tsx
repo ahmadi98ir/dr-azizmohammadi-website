@@ -20,6 +20,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="fa" dir="rtl">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Vazirmatn font */}
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
