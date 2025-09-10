@@ -1,6 +1,6 @@
 import { getPostBySlug } from '@/lib/cms';
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
+export default async function PostPage({ params }: any) {
   const post = await getPostBySlug(params.slug);
   if (!post || !post.published) return <div className="container py-10">یافت نشد</div>;
   return (
@@ -11,4 +11,3 @@ export default async function PostPage({ params }: { params: { slug: string } })
     </div>
   );
 }
-

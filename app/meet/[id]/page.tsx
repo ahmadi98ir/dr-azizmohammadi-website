@@ -1,6 +1,6 @@
 import { requireUser } from '@/lib/session';
 
-export default async function MeetPage({ params }: { params: { id: string } }) {
+export default async function MeetPage({ params }: any) {
   const user = await requireUser();
   if (!user) return <div className="container py-10">دسترسی غیرمجاز</div>;
   const domain = process.env.JITSI_DOMAIN || 'meet.jit.si';
@@ -16,4 +16,3 @@ export default async function MeetPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
-

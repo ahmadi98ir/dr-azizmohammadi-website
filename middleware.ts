@@ -4,6 +4,10 @@ const PROTECTED_PREFIXES = ['/dashboard', '/admin'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  // Skip health/SEO routes from canonical/auth logic
+  if (pathname === '/api/health' || pathname === '/robots.txt' || pathname === '/sitemap.xml') {
+    return NextResponse.next();
+  }
   // Canonical host/https redirect (if configured)
   const canonicalHost = process.env.CANONICAL_HOST || '';
   if (canonicalHost) {
@@ -34,5 +38,6 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*'],
+  // Apply middleware to all paths; internal logic narrows auth checks
+  matcher: ['/:path*'],
 };
