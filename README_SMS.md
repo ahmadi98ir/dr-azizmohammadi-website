@@ -10,10 +10,15 @@ Environment variables:
   - SMSIR_SEND_URL: API endpoint for sending
   - SMSIR_API_KEY: your API key (sent as x-api-key)
   - SMSIR_LINE_NUMBER: sender line (if required)
+  - SMSIR_AUTH_BEARER: set to `1` to send API key as `Authorization: Bearer <key>` instead of `x-api-key`
 - When SMS_PROVIDER=smsir_ultrafast:
   - SMSIR_API_KEY
   - SMSIR_TEMPLATE_ID: e.g. 268536
   - SMSIR_VERIFY_URL (optional): defaults to https://api.sms.ir/v1/send/verify
+  - SMSIR_PARAM_CODE_NAME (optional): default `CODE`
+  - SMSIR_PARAM_TTL_NAME (optional): default `TTL`
+  - SMSIR_INCLUDE_TTL (optional): set to `0` to omit TTL parameter from template
+  - SMSIR_AUTH_BEARER (optional): set to `1` to use `Authorization: Bearer <key>` header
 
 Notes
 
