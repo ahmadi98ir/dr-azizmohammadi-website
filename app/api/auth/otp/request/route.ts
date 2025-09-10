@@ -24,7 +24,8 @@ export async function POST(req: Request) {
   }
   const { code } = await createOtp(phone, 'signup');
   try {
-    await sendOtp(phone, code, 5);
+    const ttlMin = Number(process.env.OTP_TTL_MINUTES || 1);
+    await sendOtp(phone, code, ttlMin);
   } catch {}
   return NextResponse.json({ ok: true });
 }

@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [otpLeft, setOtpLeft] = useState(0);
   const router = useRouter();
   // cooldown ticker
   useEffect(() => {
@@ -20,6 +21,14 @@ export default function RegisterPage() {
     const t = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
     return () => clearInterval(t);
   }, [cooldown]);
+
+  // OTP expiry ticker (visible on step 2)
+  useEffect(() => {
+    if (step !== 2) return;
+    if (otpLeft <= 0) return;
+    const t = setInterval(() => setOtpLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, [step, otpLeft]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +50,9 @@ export default function RegisterPage() {
           throw new Error(data?.error || 'خطا در ارسال کد');
         }
         // start standard cooldown (e.g., 60s) if server didn't set
-        setCooldown((prev) => (prev > 0 ? prev : 60));
+        const ttlSec = Number(process.env.NEXT_PUBLIC_OTP_TTL_SECONDS || '60');
+        setCooldown((prev) => (prev > 0 ? prev : ttlSec));
+        setOtpLeft(ttlSec);
         setStep(2);
       } else if (step === 2) {
         const res = await fetch('/api/auth/otp/verify', {
@@ -99,13 +110,19 @@ export default function RegisterPage() {
         {step === 2 && (
           <>
             <label className="text-sm">کد تایید ارسال‌شده به {phone}</label>
+            <div className="text-xs text-gray-600">زمان باقی‌مانده: {Math.floor(otpLeft/60)}:{String(otpLeft%60).padStart(2,'0')}</div>
             <input className="border rounded-lg px-3 py-2" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="******" />
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div className="flex gap-2">
-              <button disabled={loading} className="btn btn-primary" type="submit">
-                {loading ? 'در حال بررسی...' : 'تایید کد'}
+              <button disabled={loading || otpLeft <= 0} className="btn btn-primary" type="submit">
+                {otpLeft <= 0 ? 'کد منقضی شد' : (loading ? 'در حال بررسی...' : 'تایید کد')}
               </button>
               <button type="button" className="btn btn-outline" onClick={() => setStep(1)}>ویرایش شماره</button>
+              {otpLeft <= 0 && (
+                <button type="button" className="btn btn-outline" onClick={() => setStep(1)}>
+                  ارسال مجدد کد
+                </button>
+              )}
             </div>
           </>
         )}

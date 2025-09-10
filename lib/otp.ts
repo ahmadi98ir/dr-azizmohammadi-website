@@ -53,6 +53,7 @@ export async function createOtp(phone: string, purpose: 'signup' = 'signup') {
   const code = (Math.floor(100000 + Math.random() * 900000)).toString(); // 6 digits
   const salt = crypto.randomBytes(8).toString('hex');
   const now = Date.now();
+  const ttlMinutes = Number(process.env.OTP_TTL_MINUTES || 1);
   const rec: OtpRecord = {
     id: uid('otp_'),
     phone,
@@ -60,7 +61,7 @@ export async function createOtp(phone: string, purpose: 'signup' = 'signup') {
     codeHash: hashCode(code, salt),
     salt,
     createdAt: toISO(now),
-    expiresAt: toISO(now + 5 * 60 * 1000), // 5 min
+    expiresAt: toISO(now + ttlMinutes * 60 * 1000),
     attempts: 0,
   };
   // We can prune old records for this phone
