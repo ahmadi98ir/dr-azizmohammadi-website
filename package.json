@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "sh -c \"[ '$USE_PRISMA' = '1' ] && npx prisma migrate deploy || true; next start\"",
+    "start": "sh -c \"if [ '$USE_PRISMA' = '1' ]; then npx prisma migrate deploy || npx prisma db push || true; fi; next start\"",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",

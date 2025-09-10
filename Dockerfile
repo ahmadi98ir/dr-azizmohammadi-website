@@ -52,4 +52,4 @@ ENV HOSTNAME=0.0.0.0
 
 # Optional Prisma migrate in production when enabled
 # Coolify can override CMD; this is a safe default
-CMD sh -lc "( [ \"$USE_PRISMA\" = \"1\" ] && npx prisma migrate deploy || true ) && node server.js"
+CMD sh -lc "if [ \"$USE_PRISMA\" = \"1\" ]; then npx prisma migrate deploy || npx prisma db push || true; fi; node server.js"
