@@ -18,6 +18,7 @@ model User {
   createdAt    DateTime @default(now())
   appointments Appointment[]
   sessions     Session[]
+  messagesSent Message[]
 }
 
 model Session {
