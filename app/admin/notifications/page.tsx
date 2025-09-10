@@ -8,6 +8,18 @@ export default async function AdminNotificationsPage() {
   return (
     <div className="container py-10">
       <h1 className="text-2xl font-bold">اعلان‌ها</h1>
+      {/* SMS Config Test */}
+      <div className="card p-6 mt-6 grid gap-2 max-w-xl">
+        <div className="text-sm text-gray-600">تست پیکربندی SMS (بدون ارسال واقعی)</div>
+        <a
+          className="btn btn-outline w-fit"
+          href="/api/notify/sms/test"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          نمایش نتیجه تست
+        </a>
+      </div>
       {/* Quick SMS form */}
       <form action={sendSms} className="card p-6 mt-6 grid gap-3 max-w-xl">
         <div className="text-sm text-gray-600">ارسال سریع پیامک (sms.ir)</div>

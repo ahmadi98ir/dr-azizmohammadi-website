@@ -5,7 +5,7 @@ const PROTECTED_PREFIXES = ['/dashboard', '/admin'];
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   // Skip health/SEO routes from canonical/auth logic
-  if (pathname === '/api/health' || pathname === '/robots.txt' || pathname === '/sitemap.xml') {
+  if (pathname === '/robots.txt' || pathname === '/sitemap.xml' || pathname === '/api/health' || pathname.startsWith('/api/health/')) {
     return NextResponse.next();
   }
   // Canonical host/https redirect (if configured)
