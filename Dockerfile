@@ -40,6 +40,8 @@ COPY --from=build /app/prisma ./prisma
 # Prisma engines (if generated)
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
+# Include Prisma CLI so we can run migrate/db push at runtime without network
+COPY --from=build /app/node_modules/prisma ./node_modules/prisma
 
 # Ensure data dirs exist and are writable (for JSON fallback or SQLite)
 RUN mkdir -p /app/data /app/prisma && chown -R nextjs:nextjs /app
@@ -52,4 +54,5 @@ ENV HOSTNAME=0.0.0.0
 
 # Optional Prisma migrate in production when enabled
 # Coolify can override CMD; this is a safe default
-CMD sh -lc "if [ \"$USE_PRISMA\" = \"1\" ]; then npx prisma migrate deploy || npx prisma db push || true; fi; node server.js"
+# Call Prisma CLI via node to avoid relying on npx/.bin
+CMD sh -lc "if [ \"$USE_PRISMA\" = \"1\" ]; then node ./node_modules/prisma/build/index.js migrate deploy || node ./node_modules/prisma/build/index.js db push || true; fi; node server.js"
