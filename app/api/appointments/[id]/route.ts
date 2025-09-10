@@ -3,7 +3,7 @@ import { getAppointments, saveAppointments, getUsers } from '@/lib/db';
 import { requireUser } from '@/lib/session';
 import { sendEmail } from '@/lib/notify';
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, { params }: any) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const all = await getAppointments();
@@ -14,7 +14,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   return NextResponse.json({ item });
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: any) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const body = await req.json().catch(() => null);
@@ -48,7 +48,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   return NextResponse.json({ ok: true, item: updated });
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: any) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const all = await getAppointments();

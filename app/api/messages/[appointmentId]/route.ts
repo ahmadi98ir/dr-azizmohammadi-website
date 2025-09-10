@@ -4,7 +4,7 @@ import { requireUser } from '@/lib/session';
 import { Message } from '@/lib/types';
 import { uid, toISO } from '@/lib/utils';
 
-export async function GET(_: Request, { params }: { params: { appointmentId: string } }) {
+export async function GET(_: Request, { params }: any) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const appts = await getAppointments();
@@ -16,7 +16,7 @@ export async function GET(_: Request, { params }: { params: { appointmentId: str
   return NextResponse.json({ items: list });
 }
 
-export async function POST(req: Request, { params }: { params: { appointmentId: string } }) {
+export async function POST(req: Request, { params }: any) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const appts = await getAppointments();
@@ -38,4 +38,3 @@ export async function POST(req: Request, { params }: { params: { appointmentId: 
   await saveMessages([...all, msg]);
   return NextResponse.json({ ok: true, item: msg });
 }
-
