@@ -59,11 +59,13 @@ export async function sendSMS(to: string, body: string) {
       return rec.id;
     } else {
       rec.status = 'failed';
+      rec.error = result.error;
       await saveAll(items);
       return rec.id;
     }
   } catch {
     rec.status = 'failed';
+    rec.error = 'provider_exception';
     await saveAll(items);
     return rec.id;
   }
@@ -89,10 +91,12 @@ export async function sendOtp(to: string, code: string, ttlMinutes: number) {
   try {
     const result = await sendOtpViaProvider(to, code, ttlMinutes);
     rec.status = result.ok ? 'sent' : 'failed';
+    if (!result.ok) rec.error = result.error;
     await saveAll(items);
     return rec.id;
   } catch {
     rec.status = 'failed';
+    rec.error = 'provider_exception';
     await saveAll(items);
     return rec.id;
   }

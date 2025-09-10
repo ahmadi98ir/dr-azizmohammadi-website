@@ -21,6 +21,14 @@ export default async function AdminNotificationsPage() {
             <div className="text-sm text-gray-600">{n.type.toUpperCase()} → {n.to}</div>
             <div className="font-medium">{n.subject}</div>
             <div className="text-sm text-gray-700 whitespace-pre-wrap">{n.body}</div>
+            <div className="text-xs mt-2">
+              <span className={
+                n.status === 'sent' ? 'text-green-700' : n.status === 'failed' ? 'text-red-700' : 'text-gray-500'
+              }>
+                وضعیت: {n.status}
+              </span>
+              {n.error && <span className="text-xs text-red-600 ms-3">خطا: {n.error}</span>}
+            </div>
             <div className="text-xs text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString('fa-IR')}</div>
           </div>
         ))}

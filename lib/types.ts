@@ -81,4 +81,5 @@ export interface NotificationRecord {
   body: string;
   status: 'queued' | 'sent' | 'failed';
   createdAt: string;
+  error?: string;
 }

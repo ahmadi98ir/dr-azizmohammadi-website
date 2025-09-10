@@ -14,9 +14,16 @@ export async function sendSMSViaProvider(to: string, message: string): Promise<S
 export async function sendOtpViaProvider(to: string, code: string, ttlMinutes: number): Promise<SendResult> {
   const provider = process.env.SMS_PROVIDER || 'mock';
   if (provider === 'smsir_ultrafast') {
-    return await sendViaSmsIrUltraFast(to, code, ttlMinutes);
+    const res = await sendViaSmsIrUltraFast(to, code, ttlMinutes);
+    if (res.ok) return res;
+    // Try plain sms.ir endpoint if configured, otherwise fall back to mock
+    const message = `کد تأیید شما: ${code} (اعتبار: ${ttlMinutes} دقیقه) — drazizmohammadi.ir`;
+    if (process.env.SMSIR_SEND_URL && process.env.SMSIR_API_KEY) {
+      return await sendViaSmsIr(to, message);
+    }
+    return { ok: false, error: res.error || 'smsir_ultrafast_failed' };
   }
-  // Fallback: plain text send
+  // Fallback: plain text send via selected provider (or mock)
   const message = `کد تأیید شما: ${code} (اعتبار: ${ttlMinutes} دقیقه) — drazizmohammadi.ir`;
   return await sendSMSViaProvider(to, message);
 }
@@ -76,6 +83,8 @@ async function sendViaSmsIrUltraFast(to: string, code: string, ttlMinutes: numbe
   }
 
   try {
+    const codeParam = process.env.SMSIR_PARAM_CODE_NAME || 'CODE';
+    const ttlParam = process.env.SMSIR_PARAM_TTL_NAME || 'TTL';
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -86,8 +95,8 @@ async function sendViaSmsIrUltraFast(to: string, code: string, ttlMinutes: numbe
         mobile: to,
         templateId,
         parameters: [
-          { name: 'CODE', value: String(code) },
-          { name: 'TTL', value: String(ttlMinutes) },
+          { name: codeParam, value: String(code) },
+          { name: ttlParam, value: String(ttlMinutes) },
         ],
       }),
     } as RequestInit);
@@ -103,4 +112,3 @@ async function sendViaSmsIrUltraFast(to: string, code: string, ttlMinutes: numbe
     return { ok: false, error: e?.message || 'smsir_verify_request_failed' };
   }
 }
-
