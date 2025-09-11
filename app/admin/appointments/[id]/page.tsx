@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import JalaliDateTimePicker from '@/app/components/JalaliDateTimePicker';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function AdminAppointmentDetail() {
@@ -55,8 +56,7 @@ export default function AdminAppointmentDetail() {
         <div className="text-sm text-gray-600">شناسه: {item.id}</div>
         <div className="text-sm text-gray-600">بیمار: {item.patientId}</div>
         <form onSubmit={save} className="grid gap-3">
-          <label className="text-sm">تاریخ و زمان</label>
-          <input type="datetime-local" className="border rounded-lg px-3 py-2" value={date} onChange={(e) => setDate(e.target.value)} />
+          <JalaliDateTimePicker value={date} onChange={setDate} label="تاریخ و زمان (تقویم جلالی)" />
           <label className="text-sm">وضعیت</label>
           <select className="border rounded-lg px-3 py-2" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="pending">در انتظار</option>
@@ -79,4 +79,3 @@ export default function AdminAppointmentDetail() {
     </div>
   );
 }
-

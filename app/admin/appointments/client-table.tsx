@@ -95,7 +95,7 @@ export default function ClientTable({ items }: { items: Item[] }) {
         {list.map((a) => (
           <div key={a.id} className="card p-4">
             <div className="flex items-center gap-2">
-              <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR')}</div>
+              <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR-u-ca-persian')}</div>
               <span className="text-xs text-gray-500">#{a.id}</span>
               <span className="text-xs text-gray-500">بیمار: {a.patientId}</span>
               <span className="text-xs text-gray-600">{a.type === 'visit' ? 'ویزیت' : 'مشاوره'}</span>

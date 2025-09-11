@@ -54,7 +54,7 @@ export default async function AdminHome() {
         <div className="mt-3 grid gap-3">
           {latest.map((a) => (
             <Link key={a.id} href={`/admin/appointments/${a.id}`} className="card p-4 hover:shadow-sm">
-              <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR')}</div>
+              <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR-u-ca-persian')}</div>
               <div className="text-sm text-gray-600">{a.type === 'visit' ? 'ویزیت' : 'مشاوره'} — {labelStatus(a.status)}</div>
             </Link>
           ))}

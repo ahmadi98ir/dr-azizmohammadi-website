@@ -38,7 +38,7 @@ export default async function MyAppointmentsPage() {
         {items.map((a) => (
           <div key={a.id} className="card p-4 flex items-center gap-4">
             <div className="flex-1">
-              <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR')}</div>
+            <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR-u-ca-persian')}</div>
               <div className="text-sm text-gray-600">
                 نوع: {a.type === 'visit' ? 'ویزیت' : 'مشاوره'} — وضعیت: {labelStatus(a.status)}
               </div>

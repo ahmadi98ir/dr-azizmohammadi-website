@@ -83,11 +83,11 @@ export default function ClientPayments() {
             <div className="flex items-center gap-2">
               <div className="font-medium">{(p.amount || 0).toLocaleString('fa-IR')} تومان</div>
               <span className="text-xs text-gray-600">#{p.id}</span>
-              <span className="text-xs text-gray-500">{new Date(p.createdAt || '').toLocaleString('fa-IR')}</span>
+              <span className="text-xs text-gray-500">{new Date(p.createdAt || '').toLocaleString('fa-IR-u-ca-persian')}</span>
               <span className="ms-auto text-xs px-2 py-1 rounded-full border">{labelStatus(p.status)}</span>
             </div>
             <div className="text-sm text-gray-700 mt-1">{p.patientName || ''} {p.patientEmail ? `— ${p.patientEmail}` : ''}</div>
-            <div className="text-xs text-gray-600">نوبت: <Link className="underline" href={`/admin/appointments/${p.appointmentId}`}>{p.appointmentId}</Link> — {p.appointmentDate ? new Date(p.appointmentDate).toLocaleString('fa-IR') : ''}</div>
+            <div className="text-xs text-gray-600">نوبت: <Link className="underline" href={`/admin/appointments/${p.appointmentId}`}>{p.appointmentId}</Link> — {p.appointmentDate ? new Date(p.appointmentDate).toLocaleString('fa-IR-u-ca-persian') : ''}</div>
             <div className="flex gap-2 mt-2">
               {p.status !== 'paid' && <button className="btn btn-primary text-sm" onClick={() => markPaid(p.id)}>ثبت پرداخت</button>}
             </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import JalaliDateTimePicker from '@/app/components/JalaliDateTimePicker';
 
 export default function NewAppointmentPage() {
   const router = useRouter();
@@ -21,7 +22,12 @@ export default function NewAppointmentPage() {
         body: JSON.stringify({ date, type, note }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'خطا در ثبت نوبت');
+      if (!res.ok) {
+        if (data?.error === 'invalid_fields') throw new Error('لطفاً تاریخ/زمان و نوع را کامل کنید.');
+        if (data?.error === 'overlap') throw new Error('در بازه ۶۰ دقیقه‌ای نوبت فعال دارید.');
+        if (data?.error === 'unauthorized') throw new Error('برای ثبت نوبت لازم است وارد شوید.');
+        throw new Error(data?.error || 'خطا در ثبت نوبت');
+      }
       router.push('/dashboard/appointments');
       router.refresh();
     } catch (err: any) {
@@ -35,13 +41,7 @@ export default function NewAppointmentPage() {
     <div className="container py-10 max-w-lg">
       <h1 className="text-2xl font-bold">نوبت جدید</h1>
       <form onSubmit={submit} className="card p-6 mt-6 grid gap-3">
-        <label className="text-sm">تاریخ و زمان</label>
-        <input
-          type="datetime-local"
-          className="border rounded-lg px-3 py-2"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <JalaliDateTimePicker value={date} onChange={setDate} label="تاریخ و زمان (تقویم جلالی)" />
         <label className="text-sm">نوع</label>
         <select className="border rounded-lg px-3 py-2" value={type} onChange={(e) => setType(e.target.value as any)}>
           <option value="visit">ویزیت</option>
@@ -62,4 +62,3 @@ export default function NewAppointmentPage() {
     </div>
   );
 }
-

@@ -80,7 +80,7 @@ export default function ConsultChatPage() {
             <div key={m.id} className="flex">
               <div className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm max-w-[75%]">
                 <div>{m.text}</div>
-                <div className="text-[10px] text-gray-500 mt-1">{new Date(m.createdAt).toLocaleTimeString('fa-IR')}</div>
+                <div className="text-[10px] text-gray-500 mt-1">{new Date(m.createdAt).toLocaleTimeString('fa-IR-u-ca-persian')}</div>
               </div>
             </div>
           ))}
