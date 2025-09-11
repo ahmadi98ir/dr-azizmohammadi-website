@@ -136,6 +136,8 @@ export default function ClientTable({ items }: { items: Item[] }) {
 
 function labelStatus(s: string) {
   switch (s) {
+    case 'open':
+      return 'خالی';
     case 'pending':
       return 'در انتظار تایید';
     case 'approved':

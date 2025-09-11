@@ -12,6 +12,7 @@ export interface User {
 }
 
 export type AppointmentStatus =
+  | 'open'
   | 'pending'
   | 'approved'
   | 'rejected'
@@ -22,7 +23,7 @@ export type AppointmentType = 'visit' | 'consult';
 
 export interface Appointment {
   id: string;
-  patientId: string;
+  patientId?: string;
   date: string; // ISO time
   type: AppointmentType;
   status: AppointmentStatus;

@@ -1,6 +1,7 @@
 import { requireUser } from '@/lib/session';
 import { getAppointments } from '@/lib/db';
 import ClientTable from './client-table';
+import NewSlot from './new-slot';
 
 export default async function AdminAppointments() {
   const user = await requireUser('admin');
@@ -9,6 +10,7 @@ export default async function AdminAppointments() {
   return (
     <div className="py-2">
       <h1 className="text-2xl font-bold">نوبت‌ها</h1>
+      <NewSlot />
       <ClientTable items={items} />
     </div>
   );

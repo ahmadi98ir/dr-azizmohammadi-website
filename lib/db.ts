@@ -100,7 +100,7 @@ export async function getAppointments(): Promise<Appointment[]> {
     const items = (await prisma.appointment.findMany()) as any[];
     return items.map((a) => ({
       id: a.id,
-      patientId: a.patientId,
+      patientId: (a.patientId ?? undefined) as string | undefined,
       date: new Date(a.date).toISOString(),
       type: a.type,
       status: a.status,
@@ -121,8 +121,8 @@ export async function saveAppointments(items: Appointment[]): Promise<void> {
     for (const a of items) {
       await prisma.appointment.upsert({
         where: { id: a.id },
-        update: { patientId: a.patientId, date: new Date(a.date), type: a.type, status: a.status, note: a.note ?? null },
-        create: { id: a.id, patientId: a.patientId, date: new Date(a.date), type: a.type, status: a.status, note: a.note ?? null, createdAt: new Date(a.createdAt) },
+        update: { patientId: a.patientId ?? null, date: new Date(a.date), type: a.type, status: a.status, note: a.note ?? null },
+        create: { id: a.id, patientId: a.patientId ?? null, date: new Date(a.date), type: a.type, status: a.status, note: a.note ?? null, createdAt: new Date(a.createdAt) },
       });
     }
     return;

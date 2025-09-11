@@ -31,11 +31,11 @@ model Session {
 
 model Appointment {
   id         String    @id @default(cuid())
-  patient    User      @relation(fields: [patientId], references: [id])
-  patientId  String
+  patient    User?     @relation(fields: [patientId], references: [id])
+  patientId  String?
   date       DateTime
   type       String    // 'visit' | 'consult'
-  status     String    // 'pending' | 'approved' | 'rejected' | 'cancelled' | 'completed'
+  status     String    // 'open' | 'pending' | 'approved' | 'rejected' | 'cancelled' | 'completed'
   note       String?
   createdAt  DateTime  @default(now())
   messages   Message[]

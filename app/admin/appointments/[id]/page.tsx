@@ -54,7 +54,7 @@ export default function AdminAppointmentDetail() {
       <h1 className="text-2xl font-bold">ویرایش نوبت</h1>
       <div className="card p-6 mt-6 grid gap-3">
         <div className="text-sm text-gray-600">شناسه: {item.id}</div>
-        <div className="text-sm text-gray-600">بیمار: {item.patientId}</div>
+        <div className="text-sm text-gray-600">بیمار: {item.patientId || '— (خالی)'}</div>
         <form onSubmit={save} className="grid gap-3">
           <JalaliDateTimePicker value={date} onChange={setDate} label="تاریخ و زمان (تقویم جلالی)" />
           <label className="text-sm">وضعیت</label>

@@ -77,6 +77,8 @@ function StatCard({ label, value, sub }: { label: string; value: number | string
 
 function labelStatus(s: string) {
   switch (s) {
+    case 'open':
+      return 'خالی';
     case 'pending':
       return 'در انتظار تایید';
     case 'approved':
