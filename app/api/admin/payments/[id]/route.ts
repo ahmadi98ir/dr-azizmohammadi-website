@@ -3,7 +3,7 @@ import { requireUser } from '@/lib/session';
 import { updatePayment, getPayment } from '@/lib/payments';
 import { getAppointments, saveAppointments, getUsers } from '@/lib/db';
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: any) {
   const admin = await requireUser('admin');
   if (!admin) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const body = await req.json().catch(() => null);
@@ -26,4 +26,3 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export const dynamic = 'force-dynamic';
-

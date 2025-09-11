@@ -3,7 +3,7 @@ import { requireUser } from '@/lib/session';
 import { getUsers, saveUsers } from '@/lib/db';
 import { logAudit } from '@/lib/audit';
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: any) {
   const admin = await requireUser('admin');
   if (!admin) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const body = await req.json().catch(() => null);
