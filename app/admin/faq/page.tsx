@@ -11,6 +11,12 @@ export default function AdminFaqPage() {
     const res = await fetch('/api/faq');
     if (res.ok) setItems((await res.json()).items || []);
   };
+
+  const remove = async (id: string) => {
+    if (!confirm('حذف این سوال؟')) return;
+    const res = await fetch('/api/faq/' + id, { method: 'DELETE' });
+    if (res.ok) load();
+  };
   useEffect(() => { load(); }, []);
 
   const create = async (e: React.FormEvent) => {
@@ -39,10 +45,12 @@ export default function AdminFaqPage() {
           <div key={f.id} className="card p-4">
             <div className="font-semibold">{f.question}</div>
             <div className="text-gray-700 mt-2 whitespace-pre-wrap">{f.answer}</div>
+            <div className="flex gap-2 mt-2">
+              <button className="btn btn-outline text-sm" onClick={() => remove(f.id)}>حذف</button>
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
 }
-

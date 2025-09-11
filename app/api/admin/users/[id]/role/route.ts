@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/lib/session';
 import { getUsers, saveUsers } from '@/lib/db';
+import { logAudit } from '@/lib/audit';
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const admin = await requireUser('admin');
@@ -22,8 +23,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   users[idx] = { ...current, role: role as any };
   await saveUsers(users);
+  await logAudit('user.role_change', { actorId: admin.id, resource: params.id, meta: { to: role } });
   return NextResponse.json({ ok: true });
 }
 
 export const dynamic = 'force-dynamic';
-

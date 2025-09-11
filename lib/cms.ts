@@ -50,6 +50,15 @@ export async function updatePost(id: string, patch: Partial<Post>) {
   return items[idx];
 }
 
+export async function deletePost(id: string) {
+  const items = await listPosts();
+  const idx = items.findIndex((p) => p.id === id);
+  if (idx === -1) return false;
+  items.splice(idx, 1);
+  await writeJson(postsFile, items);
+  return true;
+}
+
 export async function listFaq(): Promise<FaqItem[]> {
   return readJson<FaqItem[]>(faqFile, []);
 }
@@ -69,3 +78,11 @@ export async function updateFaq(id: string, patch: Partial<FaqItem>) {
   return items[idx];
 }
 
+export async function deleteFaq(id: string) {
+  const items = await listFaq();
+  const idx = items.findIndex((f) => f.id === id);
+  if (idx === -1) return false;
+  items.splice(idx, 1);
+  await writeJson(faqFile, items);
+  return true;
+}

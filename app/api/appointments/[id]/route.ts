@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAppointments, saveAppointments, getUsers } from '@/lib/db';
 import { requireUser } from '@/lib/session';
 import { sendEmail } from '@/lib/notify';
+import { logAudit } from '@/lib/audit';
 
 export async function GET(_: Request, { params }: any) {
   const user = await requireUser();
@@ -44,6 +45,7 @@ export async function PATCH(req: Request, { params }: any) {
         `کاربر گرامی ${patient.name}\n\nوضعیت نوبت شما به «${status}» تغییر یافت.\nشناسه نوبت: ${item.id}`,
       );
     }
+    await logAudit('appointment.update', { actorId: user.id, resource: item.id, meta: { status } });
   }
   return NextResponse.json({ ok: true, item: updated });
 }

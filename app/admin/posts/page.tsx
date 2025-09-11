@@ -27,6 +27,16 @@ export default function AdminPostsPage() {
     else { setTitle(''); setSlug(''); setContent(''); setPublished(false); load(); }
   };
 
+  const togglePublish = async (id: string, published: boolean) => {
+    const res = await fetch('/api/posts/' + id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ published }) });
+    if (res.ok) load();
+  };
+  const remove = async (id: string) => {
+    if (!confirm('حذف این مقاله؟')) return;
+    const res = await fetch('/api/posts/' + id, { method: 'DELETE' });
+    if (res.ok) load();
+  };
+
   return (
     <div className="container py-10">
       <h1 className="text-2xl font-bold">مدیریت مقالات</h1>
@@ -43,10 +53,13 @@ export default function AdminPostsPage() {
           <div key={p.id} className="card p-4">
             <div className="font-semibold">{p.title}</div>
             <div className="text-sm text-gray-600">/{p.slug} — {p.published ? 'منتشر شده' : 'پیش‌نویس'}</div>
+            <div className="flex gap-2 mt-2">
+              <button className="btn btn-outline text-sm" onClick={() => togglePublish(p.id, !p.published)}>{p.published ? 'عدم انتشار' : 'انتشار'}</button>
+              <button className="btn btn-outline text-sm" onClick={() => remove(p.id)}>حذف</button>
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
 }
-

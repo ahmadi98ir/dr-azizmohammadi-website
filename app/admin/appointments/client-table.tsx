@@ -14,20 +14,48 @@ type Item = {
 export default function ClientTable({ items }: { items: Item[] }) {
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [list, setList] = useState<Item[]>(() => items);
-  const filtered = useMemo(() => {
-    const term = q.trim();
-    return list.filter((a) => {
-      if (status && a.status !== status) return false;
-      if (!term) return true;
-      return (
-        a.id.includes(term) ||
-        a.patientId.includes(term) ||
-        new Date(a.date).toLocaleString('fa-IR').includes(term) ||
-        (a.note || '').includes(term)
-      );
-    });
-  }, [list, q, status]);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(items.length);
+
+  useMemo(() => {
+    // initial pages from SSR list
+    setPages(Math.max(1, Math.ceil(items.length / limit)));
+    setTotal(items.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function fetchRemote() {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (q.trim()) params.set('q', q.trim());
+      if (status) params.set('status', status);
+      params.set('page', String(page));
+      params.set('limit', String(limit));
+      const res = await fetch(`/api/admin/appointments?` + params.toString(), { cache: 'no-store' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'خطای دریافت');
+      setList(data.items || []);
+      setPages(data.pages || 1);
+      setTotal(data.total || 0);
+    } catch (e: any) {
+      setError(e.message || 'خطا');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Fetch on filters/page change
+  useMemo(() => {
+    fetchRemote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, status, page]);
 
   async function updateStatus(id: string, newStatus: string) {
     const res = await fetch(`/api/appointments/${id}`, {
@@ -60,11 +88,11 @@ export default function ClientTable({ items }: { items: Item[] }) {
           <option value="cancelled">لغو</option>
           <option value="completed">انجام شد</option>
         </select>
-        <div className="text-xs text-gray-600">نتیجه: {filtered.length} مورد</div>
+        <div className="text-xs text-gray-600">نتیجه: {total} مورد</div>
       </div>
 
       <div className="mt-4 grid gap-3">
-        {filtered.map((a) => (
+        {list.map((a) => (
           <div key={a.id} className="card p-4">
             <div className="flex items-center gap-2">
               <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR')}</div>
@@ -88,7 +116,19 @@ export default function ClientTable({ items }: { items: Item[] }) {
             </div>
           </div>
         ))}
-        {filtered.length === 0 && <div className="text-sm text-gray-600">موردی یافت نشد.</div>}
+        {loading && <div className="text-sm text-gray-500">در حال بارگذاری...</div>}
+        {error && <div className="text-sm text-red-600">{error}</div>}
+        {!loading && list.length === 0 && <div className="text-sm text-gray-600">موردی یافت نشد.</div>}
+      </div>
+
+      <div className="flex items-center gap-2 mt-4">
+        <button className="btn btn-outline text-sm" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+          قبلی
+        </button>
+        <div className="text-xs text-gray-600">صفحه {page} از {pages}</div>
+        <button className="btn btn-outline text-sm" disabled={page >= pages || loading} onClick={() => setPage((p) => p + 1)}>
+          بعدی
+        </button>
       </div>
     </div>
   );
@@ -110,4 +150,3 @@ function labelStatus(s: string) {
       return s;
   }
 }
-
