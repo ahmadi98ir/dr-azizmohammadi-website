@@ -62,7 +62,7 @@ export async function GET(req: Request) {
       const u = users.find((x) => x.id === a.patientId);
       return (
         a.id.includes(q) ||
-        a.patientId.includes(q) ||
+        (a.patientId || '').includes(q) ||
         (a.note || '').includes(q) ||
         (u?.name || '').toLowerCase().includes(ql) ||
         (u?.email || '').toLowerCase().includes(ql)
