@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 type Item = {
   id: string;
-  patientId: string;
+  patientId?: string;
   date: string;
   type: string;
   status: string;
@@ -97,7 +97,7 @@ export default function ClientTable({ items }: { items: Item[] }) {
             <div className="flex items-center gap-2">
               <div className="font-medium">{new Date(a.date).toLocaleString('fa-IR-u-ca-persian')}</div>
               <span className="text-xs text-gray-500">#{a.id}</span>
-              <span className="text-xs text-gray-500">بیمار: {a.patientId}</span>
+              <span className="text-xs text-gray-500">بیمار: {a.patientId || '— (خالی)'}</span>
               <span className="text-xs text-gray-600">{a.type === 'visit' ? 'ویزیت' : 'مشاوره'}</span>
               <span className="ms-auto text-xs px-2 py-1 rounded-full border">
                 {labelStatus(a.status)}

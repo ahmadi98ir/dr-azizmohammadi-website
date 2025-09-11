@@ -39,7 +39,7 @@ export async function GET(req: Request) {
     ]);
     const items = raw.map((a: any) => ({
       id: a.id,
-      patientId: a.patientId,
+      patientId: a.patientId ?? undefined,
       patientName: a.patient?.name || '',
       patientEmail: a.patient?.email || '',
       date: new Date(a.date).toISOString(),
@@ -78,4 +78,3 @@ export async function GET(req: Request) {
 }
 
 export const dynamic = 'force-dynamic';
-
