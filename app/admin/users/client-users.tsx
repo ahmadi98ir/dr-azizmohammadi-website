@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 type User = {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   role: 'admin' | 'patient' | string;
 };
@@ -21,7 +21,7 @@ export default function ClientUsers({ items, selfId }: { items: User[]; selfId: 
       if (!term) return true;
       return (
         u.name.toLowerCase().includes(term) ||
-        u.email.toLowerCase().includes(term) ||
+        (u.email || '').toLowerCase().includes(term) ||
         (u.phone || '').includes(term) ||
         u.id.includes(term)
       );
@@ -63,7 +63,7 @@ export default function ClientUsers({ items, selfId }: { items: User[]; selfId: 
           <div key={u.id} className="card p-4">
             <div className="flex items-center gap-2">
               <div className="font-medium">{u.name}</div>
-              <div className="text-sm text-gray-600">{u.email}</div>
+              {u.email && <div className="text-sm text-gray-600">{u.email}</div>}
               {u.phone && <div className="text-sm text-gray-600">{u.phone}</div>}
               <span className="ms-auto text-xs text-gray-500">#{u.id}</span>
             </div>
@@ -85,4 +85,3 @@ export default function ClientUsers({ items, selfId }: { items: User[]; selfId: 
     </div>
   );
 }
-
