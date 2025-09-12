@@ -36,8 +36,10 @@ export async function POST(req: Request) {
   rec.count += 1; store[key] = rec; await saveLoginRate(store);
   if (!email || !password) return NextResponse.json({ error: 'invalid_fields' }, { status: 400 });
   const users = await getUsers();
-  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (!user) return NextResponse.json({ error: 'invalid_credentials' }, { status: 401 });
+  const user = users.find((u) => (u.email || '').toLowerCase() === email.toLowerCase());
+  if (!user || !user.passwordHash || !user.passwordSalt) {
+    return NextResponse.json({ error: 'invalid_credentials' }, { status: 401 });
+  }
   const ok = await verifyPassword(password, user.passwordHash, user.passwordSalt);
   if (!ok) return NextResponse.json({ error: 'invalid_credentials' }, { status: 401 });
   const token = await createSession(user.id);
