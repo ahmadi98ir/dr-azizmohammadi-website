@@ -15,8 +15,9 @@ export default function NewSlot() {
     setLoading(true);
     try {
       const res = await fetch('/api/appointments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date, type, note }) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'خطا در ایجاد نوبت خالی');
+      const text = await res.text();
+      const data = text ? (() => { try { return JSON.parse(text); } catch { return { error: text }; } })() : {};
+      if (!res.ok) throw new Error((data as any)?.error || 'خطا در ایجاد نوبت خالی');
       window.location.reload();
     } catch (e: any) {
       setError(e.message || 'خطا');
@@ -41,4 +42,3 @@ export default function NewSlot() {
     </form>
   );
 }
-
