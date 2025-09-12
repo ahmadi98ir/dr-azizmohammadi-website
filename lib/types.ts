@@ -3,11 +3,11 @@ export type Role = 'patient' | 'admin';
 export interface User {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   role: Role;
-  passwordHash: string;
-  passwordSalt: string;
+  passwordHash?: string;
+  passwordSalt?: string;
   createdAt: string;
 }
 

@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation';
 export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [ticket, setTicket] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,7 +56,7 @@ export default function RegisterPage() {
         const res = await fetch('/api/auth/otp/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, code: otp }),
+          body: JSON.stringify({ phone, code: otp, purpose: 'signup' }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -79,7 +77,7 @@ export default function RegisterPage() {
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, phone, password, otpTicket: ticket }),
+          body: JSON.stringify({ name, phone, otpTicket: ticket }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || 'خطا در ثبت‌نام');
@@ -130,10 +128,7 @@ export default function RegisterPage() {
           <>
             <label className="text-sm">نام و نام خانوادگی</label>
             <input className="border rounded-lg px-3 py-2" value={name} onChange={(e) => setName(e.target.value)} />
-            <label className="text-sm">ایمیل</label>
-            <input className="border rounded-lg px-3 py-2" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <label className="text-sm">رمز عبور</label>
-            <input type="password" className="border rounded-lg px-3 py-2" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <p className="text-xs text-gray-600">ثبت‌نام بدون رمز عبور؛ ورود با کد تایید پیامکی انجام می‌شود.</p>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button disabled={loading} className="btn btn-primary" type="submit">
               {loading ? 'در حال ثبت‌نام...' : 'تکمیل ثبت‌نام'}

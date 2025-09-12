@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   if (!sameOriginOk(req)) return NextResponse.json({ error: 'forbidden_origin' }, { status: 403 });
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: 'invalid_body' }, { status: 400 });
-  const { phone } = body as { phone?: string };
+  const { phone, purpose } = body as { phone?: string; purpose?: 'signup' | 'login' };
   if (!phone || !isValidIranPhone(phone)) return NextResponse.json({ error: 'invalid_phone' }, { status: 400 });
   // rate limit per phone
   const rl = await checkAndConsumeOtpRequest(phone);
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   if (users.some((u) => (u.phone || '').replace(/\D/g, '') === phone.replace(/\D/g, ''))) {
     // still send code to verify ownership; frontend can branch to login
   }
-  const { code } = await createOtp(phone, 'signup');
+  const { code } = await createOtp(phone, purpose === 'login' ? 'login' : 'signup');
   try {
     const ttlMin = Number(process.env.OTP_TTL_MINUTES || 1);
     await sendOtp(phone, code, ttlMin);

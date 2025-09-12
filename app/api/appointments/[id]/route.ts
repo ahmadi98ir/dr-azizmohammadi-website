@@ -38,7 +38,7 @@ export async function PATCH(req: Request, { params }: any) {
   if (user.role === 'admin' && status && status !== item.status) {
     const users = await getUsers();
     const patient = users.find((u) => u.id === item.patientId);
-    if (patient) {
+    if (patient && patient.email) {
       await sendEmail(
         patient.email,
         'به‌روزرسانی وضعیت نوبت',

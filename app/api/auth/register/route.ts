@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getUsers, saveUsers } from '@/lib/db';
 import { isEmail } from '@/lib/utils';
-import { hashPassword } from '@/lib/auth';
 import { createSession } from '@/lib/session';
 import { User } from '@/lib/types';
 import { uid, toISO } from '@/lib/utils';
@@ -19,7 +18,7 @@ export async function POST(req: Request) {
     password?: string;
     otpTicket?: string;
   };
-  if (!name || !email || !password || !isEmail(email) || password.length < 6 || !phone || !otpTicket) {
+  if (!name || !phone || !otpTicket) {
     return NextResponse.json({ error: 'invalid_fields' }, { status: 400 });
   }
   // Verify OTP ticket and match phone
@@ -28,20 +27,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'otp_required' }, { status: 403 });
   }
   const users = await getUsers();
-  const exists = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (exists) return NextResponse.json({ error: 'email_exists' }, { status: 409 });
+  if (email && users.find((u) => (u.email || '').toLowerCase() === email.toLowerCase())) {
+    return NextResponse.json({ error: 'email_exists' }, { status: 409 });
+  }
   if (users.find((u) => (u.phone || '').replace(/\D/g, '') === String(phone).replace(/\D/g, ''))) {
     return NextResponse.json({ error: 'phone_exists' }, { status: 409 });
   }
-  const { hash, salt } = await hashPassword(password);
   const user: User = {
     id: uid('u_'),
     name,
-    email,
+    email: email || undefined,
     phone,
     role: 'patient',
-    passwordHash: hash,
-    passwordSalt: salt,
+    
     createdAt: toISO(Date.now()),
   };
   users.push(user);

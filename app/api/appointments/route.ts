@@ -59,11 +59,13 @@ export async function POST(req: Request) {
   const updated: Appointment = { ...all[idx], patientId: user.id, status: 'pending', note: note ?? all[idx].note } as any;
   all[idx] = updated;
   await saveAppointments(all);
-  await sendEmail(
-    user.email,
-    'ثبت نوبت جدید',
-    `کاربر گرامی ${user.name}\n\nنوبت شما ثبت شد و در انتظار تایید است.\nشناسه نوبت: ${updated.id}\nتاریخ: ${new Date(updated.date).toLocaleString('fa-IR-u-ca-persian')}`,
-  );
+  if (user.email) {
+    await sendEmail(
+      user.email,
+      'ثبت نوبت جدید',
+      `کاربر گرامی ${user.name}\n\nنوبت شما ثبت شد و در انتظار تایید است.\nشناسه نوبت: ${updated.id}\nتاریخ: ${new Date(updated.date).toLocaleString('fa-IR-u-ca-persian')}`,
+    );
+  }
   if (user.phone) {
     try {
       await sendSMS(

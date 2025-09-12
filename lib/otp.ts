@@ -6,7 +6,7 @@ import { toISO, uid } from './utils';
 type OtpRecord = {
   id: string;
   phone: string;
-  purpose: 'signup';
+  purpose: 'signup' | 'login';
   codeHash: string;
   salt: string;
   createdAt: string;
@@ -17,7 +17,7 @@ type OtpRecord = {
 type TicketRecord = {
   ticket: string;
   phone: string;
-  purpose: 'signup';
+  purpose: 'signup' | 'login';
   createdAt: string;
   expiresAt: string;
   used?: boolean;
@@ -48,7 +48,7 @@ export function isValidIranPhone(phone: string): boolean {
   return /^09\d{9}$/.test(phone);
 }
 
-export async function createOtp(phone: string, purpose: 'signup' = 'signup') {
+export async function createOtp(phone: string, purpose: 'signup' | 'login' = 'signup') {
   const all = await readJson<OtpRecord[]>(otpsFile, []);
   const code = (Math.floor(100000 + Math.random() * 900000)).toString(); // 6 digits
   const salt = crypto.randomBytes(8).toString('hex');
@@ -71,7 +71,7 @@ export async function createOtp(phone: string, purpose: 'signup' = 'signup') {
   return { id: rec.id, code };
 }
 
-export async function verifyOtp(phone: string, code: string, purpose: 'signup' = 'signup') {
+export async function verifyOtp(phone: string, code: string, purpose: 'signup' | 'login' = 'signup') {
   const all = await readJson<OtpRecord[]>(otpsFile, []);
   const rec = all.find((o) => o.phone === phone && o.purpose === purpose);
   if (!rec) return { ok: false, error: 'not_found' } as const;
@@ -102,7 +102,7 @@ export async function verifyOtp(phone: string, code: string, purpose: 'signup' =
   return { ok: true as const, ticket: ticket.ticket };
 }
 
-export async function consumeTicket(ticketStr: string, purpose: 'signup' = 'signup') {
+export async function consumeTicket(ticketStr: string, purpose: 'signup' | 'login' = 'signup') {
   const tickets = await readJson<TicketRecord[]>(ticketsFile, []);
   const idx = tickets.findIndex((t) => t.ticket === ticketStr && t.purpose === purpose);
   if (idx === -1) return { ok: false, error: 'invalid_ticket' } as const;

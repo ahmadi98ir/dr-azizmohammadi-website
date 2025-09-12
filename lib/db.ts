@@ -39,6 +39,7 @@ export async function getUsers(): Promise<User[]> {
         data: {
           name: 'مدیر سیستم',
           email: 'admin@clinic.local',
+          phone: '09000000000',
           role: 'admin',
           passwordSalt: salt,
           passwordHash: hash,
@@ -49,11 +50,11 @@ export async function getUsers(): Promise<User[]> {
     return items.map((u) => ({
       id: u.id,
       name: u.name,
-      email: u.email,
+      email: (u as any).email ?? undefined,
       phone: (u as any).phone ?? undefined,
       role: u.role,
-      passwordHash: u.passwordHash,
-      passwordSalt: u.passwordSalt,
+      passwordHash: (u as any).passwordHash ?? undefined,
+      passwordSalt: (u as any).passwordSalt ?? undefined,
       createdAt: new Date(u.createdAt).toISOString(),
     }));
   }
@@ -65,6 +66,7 @@ export async function getUsers(): Promise<User[]> {
       id: uid('u_'),
       name: 'مدیر سیستم',
       email: 'admin@clinic.local',
+      phone: '09000000000',
       role: 'admin',
       passwordSalt: salt,
       passwordHash: hash,
@@ -85,8 +87,8 @@ export async function saveUsers(users: User[]): Promise<void> {
     for (const u of users) {
       await prisma.user.upsert({
         where: { id: u.id },
-        update: { name: u.name, email: u.email, phone: u.phone ?? null, role: u.role, passwordHash: u.passwordHash, passwordSalt: u.passwordSalt },
-        create: { id: u.id, name: u.name, email: u.email, phone: u.phone ?? null, role: u.role, passwordHash: u.passwordHash, passwordSalt: u.passwordSalt, createdAt: new Date(u.createdAt) },
+        update: { name: u.name, email: u.email ?? null, phone: u.phone ?? null, role: u.role, passwordHash: u.passwordHash ?? null, passwordSalt: u.passwordSalt ?? null },
+        create: { id: u.id, name: u.name, email: u.email ?? null, phone: u.phone ?? null, role: u.role, passwordHash: u.passwordHash ?? null, passwordSalt: u.passwordSalt ?? null, createdAt: new Date(u.createdAt) },
       });
     }
     return;
