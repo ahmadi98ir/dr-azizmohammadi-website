@@ -9,10 +9,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const user = await getSessionUser(token);
 
   return (
-    <div className="container py-6">
-      <AdminNav user={user ? { name: user.name, role: user.role } : null} />
-      <div className="mt-4" />
-      {children}
+    <div className="admin-theme min-h-screen">
+      <div className="container py-6">
+        <AdminNav user={user ? { name: user.name, role: user.role } : null} />
+        <div className="mt-4" />
+        {children}
+      </div>
     </div>
   );
 }

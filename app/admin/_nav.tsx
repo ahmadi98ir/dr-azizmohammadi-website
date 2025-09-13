@@ -9,10 +9,7 @@ export default function AdminNav({ user }: { user: { name: string; role: string 
     return (
       <Link
         href={href}
-        className={
-          'text-sm px-3 py-2 rounded-lg border whitespace-nowrap ' +
-          (active ? 'bg-gray-100 border-gray-300' : 'hover:bg-gray-50')
-        }
+        className={'admin-nav-link text-sm px-3 py-2 rounded-lg border whitespace-nowrap ' + (active ? 'is-active' : '')}
       >
         {children}
       </Link>
@@ -35,4 +32,3 @@ export default function AdminNav({ user }: { user: { name: string; role: string 
     </div>
   );
 }
-

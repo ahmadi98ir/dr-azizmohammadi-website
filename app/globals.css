@@ -39,3 +39,65 @@ body {
   @apply border border-gray-300 hover:bg-gray-50;
 }
 
+/* Admin dark + pastel theme */
+.admin-theme {
+  --bg: #0f1422; /* deep navy */
+  --fg: #e6e9f0; /* light slate */
+  --card-bg: #151b2c; /* dark card */
+  --card-border: #2a3044; /* muted border */
+  --muted: #a5b1c7; /* text muted */
+  --accent: #a5b4fc; /* indigo pastel */
+  --accent-2: #93c5fd; /* sky pastel */
+  --accent-3: #f9a8d4; /* pink pastel */
+  --accent-4: #86efac; /* mint pastel */
+  --accent-5: #fde68a; /* peach pastel */
+}
+
+.admin-theme {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.admin-theme .card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+
+.admin-theme .btn {
+  color: var(--fg);
+}
+.admin-theme .btn-primary {
+  background: var(--accent);
+  color: #0f172a;
+}
+.admin-theme .btn-primary:hover {
+  background: #8fa0fb;
+}
+.admin-theme .btn-outline {
+  border-color: var(--card-border);
+}
+.admin-theme .btn-outline:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* Admin nav */
+.admin-theme .admin-nav-link {
+  border-color: var(--card-border);
+  color: var(--fg);
+  background: rgba(255,255,255,0.02);
+}
+.admin-theme .admin-nav-link:hover {
+  background: rgba(255,255,255,0.05);
+}
+.admin-theme .admin-nav-link.is-active {
+  background: linear-gradient(90deg, rgba(165,180,252,0.25), rgba(147,197,253,0.18));
+  border-color: rgba(165,180,252,0.6);
+}
+
+/* Small pastel badges and texts */
+.admin-theme .text-gray-600 { color: var(--muted); }
+.admin-theme .text-gray-500 { color: color-mix(in oklab, var(--muted), #fff 15%); }
+.admin-theme .border-gray-300 { border-color: var(--card-border); }
+.admin-theme .border-gray-100 { border-color: var(--card-border); }
+.admin-theme .hover\:bg-gray-50:hover { background: rgba(255,255,255,0.06); }
